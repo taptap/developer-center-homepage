@@ -1,4 +1,4 @@
-import { PRODUCTION_ORIGIN } from './origin';
+import { ON_LOOPBACK, PRODUCTION_ORIGIN } from './origin';
 
 /**
  * Every link this page points at, in one place.
@@ -17,13 +17,7 @@ import { PRODUCTION_ORIGIN } from './origin';
  * - on loopback (`pnpm dev` / `pnpm preview`) those paths do not exist locally, so point
  *   them at production and the links stay clickable
  */
-const prerendering = typeof window !== 'undefined' && window.__PRERENDER_INJECTED === true;
-const onLoopback =
-  !prerendering &&
-  typeof location !== 'undefined' &&
-  /^(localhost|127\.0\.0\.1|\[::1\]|0\.0\.0\.0)$/i.test(location.hostname);
-
-const ORIGIN = onLoopback ? PRODUCTION_ORIGIN : '';
+const ORIGIN = ON_LOOPBACK ? PRODUCTION_ORIGIN : '';
 const path = (value: string): string => `${ORIGIN}${value}`;
 
 export const LINKS = {
