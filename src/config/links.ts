@@ -26,6 +26,13 @@ export const LINKS = {
   login: path('/auth/login?refer=%2F'),
   cli: path('/v3/cli/'),
   docs: path('/docs/'),
+  // Ecosystem cards: the feature-intro doc behind each capability (see `sections/Ecosystem.vue`)
+  docsCloudSave: path('/docs/sdk/tap-cloudsave/features/'),
+  docsIap: path('/docs/sdk/tap-iap/overview/'),
+  docsAchievement: path('/docs/sdk/achievement/features/'),
+  docsLeaderboard: path('/docs/sdk/leaderboard/features/'),
+  docsTapLogin: path('/docs/sdk/taptap-login/features/'),
+  docsEmbeddedMoments: path('/docs/sdk/embedded-moments/features/'),
   tutorials: path('/tds-tutorials/list'),
   agents: path('/agents/'), // trailing slash: the bare path answers with a 301
   tdw: path('/tdw2026/'), // trailing slash: the bare path answers with a 302

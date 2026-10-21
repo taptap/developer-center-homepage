@@ -1731,26 +1731,6 @@ img {
   border-left: 2px solid var(--teal);
   transform: skewY(-35deg);
 }
-.cost-line {
-  display: flex;
-  max-width: 520px;
-  margin-top: 22px;
-  padding-top: 18px;
-  border-top: 1px solid rgba(255, 255, 255, 0.12);
-}
-.cost-line span {
-  flex: 0 0 auto;
-  margin-right: 16px;
-  color: #7df7ed;
-  font-size: 13px;
-  font-weight: 700;
-}
-.cost-line p {
-  margin: 0;
-  color: #c5d4e4;
-  font-size: 14px;
-  line-height: 1.6;
-}
 .rhythm {
   background: #f3f5f8;
 }
@@ -3357,13 +3337,6 @@ img {
 }
 
 @media (max-width: 767px) {
-  .cost-line {
-    display: block;
-  }
-  .cost-line span {
-    display: block;
-    margin: 0 0 6px;
-  }
   .community-links {
     display: block;
   }
@@ -5906,21 +5879,6 @@ img {
 .ecosystem .eco-icon:after {
   display: none;
 }
-.ecosystem .cost-line {
-  max-width: 560px;
-  margin-top: 14px;
-  padding: 14px 16px;
-  border-top: 0;
-  border-radius: 16px;
-  background: rgba(3, 6, 18, 0.55);
-}
-.ecosystem .cost-line span {
-  color: #7df7ed;
-}
-.ecosystem .cost-line p {
-  color: #d5e0ec;
-}
-
 /* ECOSYSTEM GRID */
 .ecosystem .section-kicker {
   font-family: inherit;
@@ -5948,7 +5906,6 @@ img {
   display: flex;
   flex-direction: column;
   min-width: 0;
-  min-height: 200px;
   padding: 26px 24px 22px;
   border: 1px solid rgba(255, 255, 255, 0.08);
   border-radius: 22px;
@@ -5965,6 +5922,7 @@ img {
     border-color 200ms ease,
     box-shadow 200ms ease;
 }
+
 .eco-card:hover {
   background: rgba(255, 255, 255, 0.11);
   border-color: rgba(255, 255, 255, 0.14);
@@ -5974,6 +5932,7 @@ img {
   -webkit-transform: translateY(-4px);
   transform: translateY(-4px);
 }
+
 .eco-card h3 {
   display: flex;
   align-items: center;
@@ -5984,6 +5943,38 @@ img {
   letter-spacing: -0.03em;
   line-height: 1.3;
 }
+
+/* 整卡即展开按钮：button 铺满 summary，点卡片任意位置都能展开 / 收起 */
+.eco-card__summary {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  flex: 1 1 auto;
+}
+
+.eco-card__toggle {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: inherit;
+  font: inherit;
+  letter-spacing: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.eco-card__toggle:after {
+  content: '';
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+}
+
 .eco-card .eco-icon {
   display: flex;
   align-items: center;
@@ -6002,10 +5993,18 @@ img {
     background-color 200ms ease,
     color 200ms ease;
 }
+
 .eco-card:hover .eco-icon {
   background: var(--teal);
   color: #07131c;
 }
+
+.eco-card .eco-svg {
+  display: block;
+  width: 19px;
+  height: 19px;
+}
+
 .eco-card p {
   flex: 1 1 auto;
   margin: 12px 0 0;
@@ -6014,40 +6013,37 @@ img {
   line-height: 1.7;
 }
 
-/* Integration-cost row at the bottom of a card: hairline divider, label left, estimate right */
-.eco-card .cost-line {
-  display: flex;
-  align-items: baseline;
-  justify-content: space-between;
+.eco-card .code-line {
   max-width: none;
   margin-top: auto;
-  padding: 14px 0 0;
-  border-top: 1px solid rgba(255, 255, 255, 0.16);
-  border-radius: 0;
-  background: none;
-  -webkit-backdrop-filter: none;
-  backdrop-filter: none;
+  padding: 13px 16px;
+  border: 0;
+  border-radius: 18px;
+  background: rgba(255, 255, 255, 0.1);
+  -webkit-backdrop-filter: blur(24px);
+  backdrop-filter: blur(24px);
 }
-.eco-card .cost-line span {
-  margin-right: 16px;
-  color: #9fb0c6;
-  font-size: 13px;
-  font-weight: 500;
-  letter-spacing: 0.04em;
+
+.eco-card .code-line span,
+.eco-card .code-line code {
+  color: #ffffff;
 }
-.eco-card .cost-line p {
-  margin: 0;
-  color: #00d9c5;
-  font-size: 13px;
-  font-weight: 650;
+
+.eco-card .code-line i {
+  display: none;
+}
+
+/* 901–1099px 曾经仍是三列，每列只有 272px，描述被撑成三行、卡片高度参差；
+   这里把两列的阈值抬到 1099px，保证三列时每列至少有 330px。 */
+@media (max-width: 1099px) {
+  .eco-grid {
+    grid-template-columns: 1fr 1fr;
+  }
 }
 
 @media (max-width: 900px) {
   .ecosystem .section-heading h2 {
     font-size: 38px;
-  }
-  .eco-grid {
-    grid-template-columns: 1fr 1fr;
   }
 }
 
@@ -6058,6 +6054,510 @@ img {
   .eco-card:hover {
     -webkit-transform: none;
     transform: none;
+  }
+}
+
+/* 网格态与选中态同高：两个状态取更高的那个兜底，点击卡片展开 / 收起时区块高度不变，
+   下方内容不会跟着上下跳。兜底高度只撑区块，卡片本身仍按内容排版（align-content: start）。
+   - ≥1100px：三列两行网格（390）比大卡矮，按大卡托底 —— 大卡 435（16:9 配图撑满列宽）+ 能力胶囊 74
+   - 900–1099px：两列三行网格（594）本来就比大卡高，按网格托底 */
+@media (min-width: 1100px) {
+  .eco-grid,
+  .eco-panel {
+    min-height: 510px;
+  }
+  .eco-grid {
+    align-content: start;
+  }
+}
+
+@media (min-width: 900px) and (max-width: 1099px) {
+  .eco-grid,
+  .eco-panel {
+    min-height: 594px;
+  }
+  .eco-grid {
+    align-content: start;
+  }
+}
+
+/* 底部是展开 / 收起提示，点击由 summary 上的 button 覆盖层接管 */
+.eco-card__more {
+  display: inline-flex;
+  align-items: center;
+  margin-top: 18px;
+  color: #9fb0c6;
+  font-size: 13px;
+  font-weight: 600;
+  -webkit-transition: color 200ms ease;
+  transition: color 200ms ease;
+}
+
+.eco-card__more i {
+  margin-left: 5px;
+  font-size: 12px;
+}
+
+.eco-card:hover .eco-card__more {
+  color: #00d9c5;
+}
+
+/* 选中态：上方大卡（能力详情）+ 下方能力胶囊，形态对齐「合作案例」区块 */
+.eco-detail-card {
+  display: flex;
+  flex-direction: column;
+  /* 兜底高度；桌面「网格态 ↔ 选中态」的同高由下方 .eco-grid / .eco-panel 的媒体查询统一控制 */
+  min-height: 390px;
+  padding: 28px 30px 26px;
+  border: 1px solid rgba(0, 217, 197, 0.28);
+  border-radius: 24px;
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.eco-detail-card__head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  margin-bottom: 22px;
+}
+
+.eco-detail-card__title {
+  min-width: 0;
+}
+
+.eco-detail-card__title h3 {
+  display: flex;
+  align-items: center;
+  margin: 0;
+  color: #ffffff;
+  font-size: 22px;
+  font-weight: 650;
+  letter-spacing: -0.03em;
+  line-height: 1.3;
+}
+
+.eco-detail-card__title p {
+  max-width: 720px;
+  margin: 10px 0 0;
+  color: #c9d7e6;
+  font-size: 14px;
+  line-height: 1.7;
+}
+
+.eco-detail-card .eco-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 auto;
+  width: 34px;
+  height: 34px;
+  margin-right: 10px;
+  border-radius: 11px;
+  background: rgba(0, 217, 197, 0.16);
+  color: #00d9c5;
+}
+
+.eco-detail__cols {
+  display: grid;
+  /* 接入案例（左）放 16:9 配图，比中间那列说明文字更吃宽度；
+     右侧两列（案例说明 + 代码示例）合计占 61.7%，比三等分时更宽松 */
+  grid-template-columns: 1.15fr 0.8fr 1.05fr;
+  grid-column-gap: 18px;
+  grid-row-gap: 18px;
+  flex: 1 1 auto;
+  padding-top: 20px;
+  border-top: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+/* 托底多出来的高度分给三块内容，代码块跟着撑满，不堆在卡片底部 */
+.eco-detail__block {
+  display: flex;
+  flex-direction: column;
+  /* 代码 / 文案再长也不许撑开自己的栅格列，否则配图那一列会被挤窄 */
+  min-width: 0;
+}
+
+.eco-detail-card h4 {
+  margin: 0 0 10px;
+  color: #00d9c5;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+}
+
+/* 接入案例说明（中间列）：做成与配图 / 代码同高同宽的面板 + 分隔线，
+   三列视觉重量拉齐，不再是一段浮在列里的文字 */
+.eco-detail-card .eco-detail__case-info {
+  display: flex;
+  flex-direction: column;
+  flex: 1 1 auto;
+  margin: 0;
+  padding: 14px 16px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.05);
+  color: #c9d7e6;
+  font-size: 13px;
+  line-height: 1.6;
+}
+
+.eco-detail-card .eco-detail__case-info-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-width: 0;
+}
+
+.eco-detail-card .eco-detail__case-info-row + .eco-detail__case-info-row {
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* 「功能实现」是标题 + 列表，竖排，不参与左右分布 */
+.eco-detail-card .eco-detail__case-info-row--stack {
+  display: block;
+}
+
+.eco-detail-card .eco-detail__case-info-key {
+  color: #7d8ba1;
+  font-size: 12px;
+  white-space: nowrap;
+}
+
+/* 接入方式只有三种取值，做成小胶囊，和区块小标题的青色呼应 */
+.eco-detail-card .eco-detail__case-info-mode {
+  flex: 0 0 auto;
+  min-width: 0;
+  padding: 2px 8px;
+  border-radius: 999px;
+  background: rgba(0, 217, 197, 0.16);
+  color: #33e3d2;
+  font-size: 12px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+/* 功能实现分点：小圆点 + 高亮能力名 + 一句说明 */
+.eco-detail-card .eco-detail__case-points {
+  margin: 8px 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.eco-detail-card .eco-detail__case-point {
+  position: relative;
+  margin-top: 7px;
+  padding-left: 12px;
+}
+
+.eco-detail-card .eco-detail__case-point::before {
+  content: '';
+  position: absolute;
+  top: 8px;
+  left: 1px;
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: rgba(0, 217, 197, 0.7);
+}
+
+.eco-detail-card .eco-detail__case-point-title {
+  color: #ffffff;
+  font-weight: 600;
+}
+
+/* 三列并排时，中间列少了 h4，用与 h4 等高的上间距（13px × 1.6 行高 + 10px 下边距）让文字顶边与配图顶边齐平 */
+@media (min-width: 900px) {
+  .eco-detail-card .eco-detail__block--case-info {
+    padding-top: 31px;
+  }
+}
+
+/* 接入案例：一张配图，作品名做成配图右下角的角标；配图未提供时渲染虚线占位框 */
+.eco-detail-card .eco-detail-case {
+  display: flex;
+  flex-direction: column;
+  flex: 1 1 auto;
+  min-width: 0;
+  /* 列比配图高时，配图贴住所在列的右下角，不再浮在顶部 */
+  align-items: flex-end;
+  justify-content: flex-end;
+}
+
+.eco-detail-card .eco-detail-case__media {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  /* 配图固定 16:9：宽度跟随三列栅格，高度由比例算出，不再跟着右侧代码块拉伸 */
+  flex: 0 0 auto;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  overflow: hidden;
+  border: 1px dashed rgba(255, 255, 255, 0.22);
+  border-radius: 12px;
+  background: rgba(6, 10, 28, 0.35);
+}
+
+/* 有配图时换成实线边框；虚线边框只留给「配图待补」的占位态 */
+.eco-detail-card .eco-detail-case__media.is-filled {
+  border-style: solid;
+  border-color: rgba(255, 255, 255, 0.18);
+}
+
+.eco-detail-card .eco-detail-case__media img {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.eco-detail-card .eco-detail-case__media-ph {
+  display: inline-flex;
+  align-items: center;
+  color: #7d8ba1;
+  font-size: 12px;
+  letter-spacing: 0.08em;
+}
+
+.eco-detail-card .eco-detail-case__media-ph i {
+  margin-right: 6px;
+  font-size: 14px;
+}
+
+.eco-detail-card .eco-detail-case__badge {
+  position: absolute;
+  right: 10px;
+  bottom: 10px;
+  z-index: 1;
+  max-width: calc(100% - 20px);
+  padding: 4px 10px;
+  overflow: hidden;
+  border-radius: 999px;
+  background: rgba(6, 10, 28, 0.72);
+  color: #ffffff;
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 1.5;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  -webkit-backdrop-filter: blur(8px);
+  backdrop-filter: blur(8px);
+}
+
+.eco-detail-card .eco-detail__code {
+  flex: 1 1 auto;
+  margin: 0;
+  /* 与「接入案例说明」面板同一套描边 / 内边距，两块面板在右半区对齐 */
+  padding: 14px 16px;
+  overflow-x: auto;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  background: rgba(6, 10, 28, 0.55);
+  color: #d6e3f2;
+  font-family: Menlo, Consolas, monospace;
+  font-size: 12px;
+  line-height: 1.6;
+}
+
+.eco-detail__doc {
+  display: inline-flex;
+  align-items: center;
+  flex: 0 0 auto;
+  margin: 6px 0 0 24px;
+  color: #ffffff;
+  font-size: 13px;
+  font-weight: 600;
+  -webkit-transition: color 200ms ease;
+  transition: color 200ms ease;
+}
+
+.eco-detail__doc i {
+  margin-left: 5px;
+  font-size: 12px;
+}
+
+.eco-detail__doc:hover {
+  color: #00d9c5;
+}
+
+/* 能力胶囊：形态与「合作案例」的 tab 一致，按深色底调整配色 */
+.eco-pills {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  margin: 18px -5px 0;
+}
+
+.eco-pill {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  flex: 0 0 auto;
+  margin: 0 5px 10px;
+  padding: 9px 18px 9px 14px;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 100px;
+  background: rgba(255, 255, 255, 0.05);
+  color: #c9d7e6;
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 1.5;
+  white-space: nowrap;
+  cursor: pointer;
+  -webkit-transition:
+    border-color 0.32s ease,
+    background 0.32s ease,
+    color 0.32s ease;
+  transition:
+    border-color 0.32s ease,
+    background 0.32s ease,
+    color 0.32s ease;
+}
+
+.eco-pill .eco-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 auto;
+  width: 26px;
+  height: 26px;
+  margin-right: 8px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.1);
+  color: #7fe3d8;
+  font-size: 13px;
+  -webkit-transition:
+    background 0.32s ease,
+    color 0.32s ease;
+  transition:
+    background 0.32s ease,
+    color 0.32s ease;
+}
+
+.eco-pill:hover {
+  border-color: rgba(0, 217, 197, 0.5);
+}
+
+.eco-pill.is-active {
+  border-color: var(--teal);
+  background: var(--teal);
+  color: #07131c;
+}
+
+.eco-pill.is-active .eco-icon {
+  background: rgba(7, 19, 28, 0.14);
+  color: #07131c;
+}
+
+/* 网格态与选中态互斥切换。
+   网格出、详情进：网格快速淡出，详情由 JS 的 FLIP 负责入场（不给详情定义 enter 过渡，
+   否则 Vue 会等淡入结束再触发 enter 钩子，形变会被推迟半秒）。
+   详情出、网格进：两边都用淡入淡出。 */
+.eco-swap-leave-active {
+  -webkit-transition: opacity 140ms ease;
+  transition: opacity 140ms ease;
+}
+
+.eco-swap-leave-to {
+  opacity: 0;
+}
+
+.eco-grid.eco-swap-enter-active {
+  -webkit-transition: opacity 180ms ease;
+  transition: opacity 180ms ease;
+}
+
+.eco-grid.eco-swap-enter-from {
+  opacity: 0;
+}
+
+/* 入场细节：大卡内容与胶囊错帧上浮，配合大卡的 FLIP 形变 */
+
+.eco-detail-card > * {
+  -webkit-animation: eco-detail-in 320ms ease both;
+  animation: eco-detail-in 320ms ease both;
+}
+
+.eco-pills {
+  -webkit-animation: eco-detail-in 320ms 120ms ease both;
+  animation: eco-detail-in 320ms 120ms ease both;
+}
+
+@-webkit-keyframes eco-detail-in {
+  from {
+    opacity: 0;
+    -webkit-transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    -webkit-transform: translateY(0);
+  }
+}
+
+@keyframes eco-detail-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* 跟随系统「减少动态效果」：关掉全部入场动效 */
+@media (prefers-reduced-motion: reduce) {
+  .eco-detail-card > *,
+  .eco-pills {
+    -webkit-animation: none;
+    animation: none;
+  }
+
+  .eco-grid.eco-swap-enter-active,
+  .eco-swap-leave-active {
+    -webkit-transition: none;
+    transition: none;
+  }
+}
+
+@media (max-width: 899px) {
+  .eco-detail__cols {
+    grid-template-columns: 1fr;
+  }
+  .eco-detail-card {
+    padding: 22px 20px 20px;
+  }
+  .eco-detail-card__head {
+    display: block;
+  }
+  .eco-detail__doc {
+    margin: 14px 0 0;
+  }
+}
+
+/* 移动端：能力胶囊改横向滑动，不再折成多行 */
+@media (max-width: 767px) {
+  .eco-pills {
+    flex-wrap: nowrap;
+    justify-content: flex-start;
+    margin: 18px 0 0;
+    padding-bottom: 6px;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+  }
+
+  .eco-pills::-webkit-scrollbar {
+    display: none;
+  }
+
+  .eco-pill {
+    margin: 0 10px 0 0;
   }
 }
 
