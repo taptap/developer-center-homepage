@@ -53,6 +53,19 @@ jobs:
           fetch-depth: 0
           persist-credentials: false
 
+      # Release tags are CalVer: `v2026.10.21`, same-day repeats `v2026.10.21.1`.
+      # `node scripts/next-tag.mjs` prints the next one (Asia/Shanghai, reads remote tags).
+      - name: Validate tag shape
+        if: github.ref_type == 'tag'
+        env:
+          TAG: ${{ github.ref_name }}
+        run: |
+          if ! printf '%s' "$TAG" | grep -Eq '^v[0-9]{4}\.[0-9]{1,2}\.[0-9]{1,2}(\.[0-9]+)?$'; then
+            echo "::error::Tag '$TAG' must look like v2026.10.21 or v2026.10.21.1"
+            exit 1
+          fi
+          echo "tag=$TAG"
+
       # The tag is the only version source: it drives the build stamp, the tarball name
       # (scripts/package-release.mjs) and the `landing-version` meta tag.
       - name: Resolve version

@@ -20,12 +20,13 @@ const pkg = JSON.parse(readFileSync(path.resolve('package.json'), 'utf8'));
 /**
  * Version resolution: prefer the tag being released over `package.json`.
  *
- * A tag push sets `GITHUB_REF_NAME` to the tag (`v1.2.3`), so the asset name always
- * matches the release it is attached to even when `package.json` was not bumped.
+ * Release tags are CalVer (`v2026.10.21`, same-day repeats `v2026.10.21.1`), so the asset
+ * name always matches the release it is attached to even when `package.json` was not
+ * bumped (it only feeds local, non-tag builds).
  * `workflow_dispatch` runs on a branch, where `GITHUB_REF_NAME` is a branch name —
  * reject that explicitly, and otherwise only accept values shaped like a version.
  */
-const TAG_VERSION = /^v?(\d+\.\d+\.\d+(?:-[0-9A-Za-z.-]+)?(?:\+[0-9A-Za-z.-]+)?)$/;
+const TAG_VERSION = /^v?(\d+(?:\.\d+)+(?:-[0-9A-Za-z.-]+)?(?:\+[0-9A-Za-z.-]+)?)$/;
 const refName = process.env.GITHUB_REF_NAME ?? '';
 const onBranchRef = process.env.GITHUB_REF_TYPE === 'branch';
 const tagMatch = onBranchRef ? null : TAG_VERSION.exec(refName);
