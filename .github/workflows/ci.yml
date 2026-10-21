@@ -23,7 +23,7 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 15
     env:
-      # Verification does not need a browser; prerendering only runs for releases
+      # Keep the install fast: the browser is resolved below, right before prerendering.
       PUPPETEER_SKIP_DOWNLOAD: 'true'
     steps:
       - name: Checkout
@@ -58,12 +58,30 @@ jobs:
       - name: Audit dist
         run: pnpm run audit:dist
 
+      # Prerendering is the artifact that actually ships, so it runs here too: a page that
+      # only breaks when prerendered (missing <main>, skeleton left behind, runtime-only
+      # head injection) should fail the pull request, not the release tag.
+      #
+      # `scripts/prerender.mjs` prefers a system Chrome and falls back to puppeteer's own
+      # binary; the runner image ships Chrome, so this is normally a no-op.
+      - name: Ensure a browser for prerendering
+        run: |
+          set -euo pipefail
+          for candidate in google-chrome google-chrome-stable chromium chromium-browser; do
+            if command -v "$candidate" >/dev/null 2>&1; then
+              echo "using $(command -v "$candidate")"
+              exit 0
+            fi
+          done
+          echo "no system Chrome found, downloading puppeteer's"
+          npx puppeteer browsers install chrome
+
       # The contract with tds-dc: it uploads the artifact to one fixed CDN prefix, so every
       # static reference in index.html must already point there. Without this the mismatch
       # only shows up when tds-dc fetches the release.
-      - name: Release-form build (CDN base contract)
+      - name: Release-form build (prerender + CDN base contract)
         env:
           PUBLIC_BASE: //assets.tapimg.com/developer-center-homepage/current/
         run: |
-          pnpm run build
-          node scripts/audit-dist.mjs "--expect-base=$PUBLIC_BASE"
+          pnpm run build:release
+          node scripts/audit-dist.mjs --require-prerender "--expect-base=$PUBLIC_BASE"
