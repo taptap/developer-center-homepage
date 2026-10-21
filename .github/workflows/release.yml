@@ -1,0 +1,124 @@
+name: Release
+
+# Tagging publishes release assets (tar.gz + sha256 + manifest.json). It does not
+# deploy: a pipeline outside this repository downloads the assets and publishes
+# them. See the deployment section of the README.
+#
+# No third-party credentials are used — only the repository's own GITHUB_TOKEN.
+
+on:
+  push:
+    tags: ['v*']
+  workflow_dispatch:
+    inputs:
+      ref:
+        description: Ref to release (defaults to the branch head)
+        required: false
+        type: string
+
+permissions:
+  contents: write
+
+concurrency:
+  group: release
+  cancel-in-progress: false
+
+jobs:
+  release:
+    name: Build & publish assets
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      # Absolute CDN base baked into the HTML/JS. Configure it as a repository variable
+      # (Settings → Variables → PUBLIC_BASE), e.g. https://<cdn>/developer-center-homepage/current/
+      # The production CDN prefix. tds-dc uploads the artifact to exactly this prefix and
+      # serves it through assets.tapimg.com, so keep the default in sync with the fetch
+      # script on the tds-dc side; override with the repository variable when needed.
+      PUBLIC_BASE: ${{ vars.PUBLIC_BASE || '//assets.tapimg.com/developer-center-homepage/current/' }}
+    steps:
+      - name: Check PUBLIC_BASE
+        run: |
+          case "${PUBLIC_BASE}" in
+            */) ;;
+            *)
+              echo "::error::PUBLIC_BASE must end with '/', got '${PUBLIC_BASE}'"
+              exit 1
+              ;;
+          esac
+          echo "PUBLIC_BASE=${PUBLIC_BASE}"
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: ${{ inputs.ref || github.ref }}
+          fetch-depth: 0
+          persist-credentials: false
+
+      # The tag is the only version source: it drives the build stamp, the tarball name
+      # (scripts/package-release.mjs) and the `landing-version` meta tag.
+      - name: Resolve version
+        run: |
+          if [ "${{ github.ref_type }}" = "tag" ]; then
+            version="${GITHUB_REF_NAME#v}"
+          else
+            version="$(node -p "require('./package.json').version")"
+          fi
+          echo "APP_VERSION=${version}" >> "$GITHUB_ENV"
+          echo "APP_VERSION=${version}"
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@ea17c68df8912ef543352723c149a84f56e3d413 # v6.1.0
+
+      - name: Setup Node
+        uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: '24'
+          cache: pnpm
+
+      - name: Install (with Chromium for prerendering)
+        run: pnpm install --frozen-lockfile
+
+      # A tag can be pushed from any ref, so the release job repeats the cheap CI gates
+      # instead of trusting that the commit went through a pull request.
+      - name: Format check
+        run: pnpm run format:check
+
+      - name: Typecheck
+        run: pnpm run typecheck
+
+      - name: Tracking contract
+        run: pnpm run check:tracking
+
+      - name: Build with prerender
+        run: pnpm run build:release
+
+      - name: Audit dist (require prerender)
+        run: node scripts/audit-dist.mjs --require-prerender "--expect-base=$PUBLIC_BASE"
+
+      - name: Package release assets
+        run: node scripts/package-release.mjs
+
+      - name: Publish GitHub Release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          tag="${{ github.ref_type == 'tag' && github.ref_name || '' }}"
+          if [ -z "$tag" ]; then tag="v$(node -p "require('./package.json').version")"; fi
+          # `--target` only matters when the tag does not exist yet (manual dispatch):
+          # `gh` otherwise creates it at the default branch, while the assets were built
+          # from the checked-out ref. GitHub ignores the target when the tag exists.
+          gh release create "$tag" \
+            --target "$(git rev-parse HEAD)" \
+            --title "$tag" \
+            --generate-notes \
+            .release/*.tar.gz .release/*.sha256 .release/manifest.json
+
+      - name: Upload workflow artifacts
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: release-assets
+          path: .release/
+          # upload-artifact skips hidden paths by default, and `.release/` starts with a dot:
+          # without this the step silently uploads nothing (v1.0.0 run found no files).
+          include-hidden-files: true
+          retention-days: 14

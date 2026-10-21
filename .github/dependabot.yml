@@ -1,0 +1,31 @@
+# Weekly dependency and workflow updates.
+# Grouped: minor + patch land in one PR, majors get their own PR so breaking changes are reviewed.
+version: 2
+
+updates:
+  - package-ecosystem: npm
+    directory: /
+    schedule:
+      interval: weekly
+    open-pull-requests-limit: 5
+    groups:
+      npm-minor-patch:
+        patterns: ['*']
+        update-types: ['minor', 'patch']
+    ignore:
+      # Tied to the X-UA identity string; bump only after verifying the payload
+      - dependency-name: js-cookie
+        update-types: ['version-update:semver-major']
+      # `vue-tsc` loads `typescript/lib/tsc`, which TypeScript 7 (the native port) does
+      # not ship — the typecheck job crashes on it. Stay on 5.x until vue-tsc supports 7.
+      - dependency-name: typescript
+        update-types: ['version-update:semver-major']
+
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly
+    groups:
+      actions-minor-patch:
+        patterns: ['*']
+        update-types: ['minor', 'patch']

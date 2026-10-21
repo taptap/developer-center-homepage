@@ -1,0 +1,4 @@
+/* Base layer: the global box-sizing reset, before anything else. */
+* {
+  box-sizing: border-box;
+}

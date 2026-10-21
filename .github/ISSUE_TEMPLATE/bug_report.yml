@@ -1,0 +1,58 @@
+name: Bug report
+description: Rendering, interaction or compatibility problems
+labels: [bug]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Please do **not** report security issues here. Use the repository's private
+        **Security → Report a vulnerability** channel instead.
+  - type: textarea
+    id: what
+    attributes:
+      label: What happened
+      description: What did you see, and what did you expect instead?
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce
+      placeholder: |
+        1. Open https://developer.taptap.cn/
+        2. Scroll to "..."
+        3. Click "..."
+    validations:
+      required: true
+  - type: input
+    id: environment
+    attributes:
+      label: Environment
+      description: Browser / OS / viewport width (required for layout issues)
+      placeholder: Chrome 138 / macOS 15 / 1440px
+    validations:
+      required: true
+  - type: textarea
+    id: screenshot
+    attributes:
+      label: Screenshot or recording
+      description: Drag it in. For layout issues please include the viewport width.
+    validations:
+      required: false
+  - type: dropdown
+    id: origin
+    attributes:
+      label: Reproducible in production?
+      options:
+        - Yes, on developer.taptap.cn
+        - Only in local dev
+        - Not sure
+    validations:
+      required: true
+  - type: checkboxes
+    id: checks
+    attributes:
+      label: Confirmations
+      options:
+        - label: I searched existing issues and found no duplicate
+          required: true

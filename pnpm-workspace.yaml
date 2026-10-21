@@ -1,0 +1,4 @@
+# pnpm settings (pnpm >= 12 reads these from here instead of package.json).
+# Only these dependencies may run install-time lifecycle (build) scripts.
+allowBuilds:
+  puppeteer: true

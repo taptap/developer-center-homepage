@@ -1,0 +1,24 @@
+/* Design tokens. First in the cascade, before anything consumes them. */
+:root {
+  --ink: #16181d;
+  --ink-soft: #4f5663;
+  --muted: #747c88;
+  --paper: #f5f7fa;
+  --line: #e5e9ee;
+  --line-soft: #edf0f3;
+  --frame-line-light: rgba(223, 228, 234, 0.72);
+  --frame-line-dark: rgba(255, 255, 255, 0.09);
+  --navy: #09092f;
+  --navy-blue: #222740;
+  --mark-gray: #d5dae2;
+  --purple: #302594;
+  --teal: #00d9c5;
+  --teal-dark: #008f84;
+  --shadow-sm: 0 10px 30px rgba(10, 12, 38, 0.07);
+  --shadow-md: 0 24px 70px rgba(10, 12, 38, 0.12);
+  --container: 1200px;
+  --block-hover-ink: var(--purple);
+  --block-hover-veil: rgba(255, 255, 255, 0.3);
+  --block-hover-shadow: 0 8px 20px rgba(22, 26, 48, 0.045);
+  -webkit-tap-highlight-color: transparent;
+}

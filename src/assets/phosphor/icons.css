@@ -1,0 +1,190 @@
+/* Only the Phosphor glyphs used by the landing page are kept. */
+@font-face {
+  font-family: "Phosphor";
+  src: url("./Phosphor.woff2") format("woff2");
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+.ph {
+  font-family: "Phosphor" !important;
+  font-style: normal;
+  font-weight: normal;
+  line-height: 1;
+  -webkit-font-smoothing: antialiased;
+}
+
+.ph.ph-arrow-down:before {
+  content: "\e03e";
+}
+.ph.ph-arrow-right:before {
+  content: "\e06c";
+}
+.ph.ph-arrow-up-right:before {
+  content: "\e092";
+}
+.ph.ph-arrows-clockwise:before {
+  content: "\e094";
+}
+.ph.ph-book-open:before {
+  content: "\e0e6";
+}
+.ph.ph-caret-down:before {
+  content: "\e136";
+}
+.ph.ph-chart-bar:before {
+  content: "\e150";
+}
+.ph.ph-chat-circle:before {
+  content: "\e168";
+}
+.ph.ph-chats-circle:before {
+  content: "\e17e";
+}
+.ph.ph-cloud:before {
+  content: "\e1aa";
+}
+.ph.ph-credit-card:before {
+  content: "\e1d2";
+}
+.ph.ph-device-mobile:before {
+  content: "\e1e0";
+}
+.ph.ph-file:before {
+  content: "\e230";
+}
+.ph.ph-flag:before {
+  content: "\e244";
+}
+.ph.ph-flask:before {
+  content: "\e79e";
+}
+.ph.ph-game-controller:before {
+  content: "\e26e";
+}
+.ph.ph-image:before {
+  content: "\e2ca";
+}
+.ph.ph-lightbulb:before {
+  content: "\e2dc";
+}
+.ph.ph-list:before {
+  content: "\e2f0";
+}
+.ph.ph-medal:before {
+  content: "\e320";
+}
+.ph.ph-pulse:before {
+  content: "\e000";
+}
+.ph.ph-question:before {
+  content: "\e3e8";
+}
+.ph.ph-rocket:before {
+  content: "\e3fc";
+}
+.ph.ph-upload-simple:before {
+  content: "\e4c0";
+}
+.ph.ph-user:before {
+  content: "\e4c2";
+}
+.ph.ph-users:before {
+  content: "\e4d6";
+}
+
+@font-face {
+  font-family: "Phosphor-Bold";
+  src: url("./Phosphor-Bold.woff2") format("woff2");
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+.ph-bold {
+  font-family: "Phosphor-Bold" !important;
+  font-style: normal;
+  font-weight: normal;
+  line-height: 1;
+  -webkit-font-smoothing: antialiased;
+}
+
+.ph-bold.ph-arrows-left-right:before {
+  content: "\e0a0";
+}
+.ph-bold.ph-article:before {
+  content: "\e0a8";
+}
+.ph-bold.ph-megaphone:before {
+  content: "\e324";
+}
+.ph-bold.ph-rocket-launch:before {
+  content: "\e3fe";
+}
+
+@font-face {
+  font-family: "Phosphor-Fill";
+  src: url("./Phosphor-Fill.woff2") format("woff2");
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+.ph-fill {
+  font-family: "Phosphor-Fill" !important;
+  font-style: normal;
+  font-weight: normal;
+  line-height: 1;
+  -webkit-font-smoothing: antialiased;
+}
+
+.ph-fill.ph-check-circle:before {
+  content: "\e184";
+}
+
+@font-face {
+  font-family: "Phosphor-Duotone";
+  src: url("./Phosphor-Duotone.woff2") format("woff2");
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+.ph-duotone {
+  font-family: "Phosphor-Duotone" !important;
+  font-style: normal;
+  font-weight: normal;
+  line-height: 1;
+  -webkit-font-smoothing: antialiased;
+}
+
+.ph-duotone.ph-device-mobile-camera:before {
+  content: "\e1e2";
+  opacity: 0.2;
+}
+.ph-duotone.ph-device-mobile-camera:after {
+  content: "\e1e3";
+  margin-left: -1em;
+}
+.ph-duotone.ph-devices:before {
+  content: "\eba4";
+  opacity: 0.2;
+}
+.ph-duotone.ph-devices:after {
+  content: "\eba5";
+  margin-left: -1em;
+}
+.ph-duotone.ph-monitor:before {
+  content: "\e32e";
+  opacity: 0.2;
+}
+.ph-duotone.ph-monitor:after {
+  content: "\e32f";
+  margin-left: -1em;
+}
+.ph-duotone.ph-terminal-window:before {
+  content: "\eae8";
+  opacity: 0.2;
+}
+.ph-duotone.ph-terminal-window:after {
+  content: "\eae9";
+  margin-left: -1em;
+}
+

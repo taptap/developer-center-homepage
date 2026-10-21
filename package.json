@@ -1,0 +1,45 @@
+{
+  "name": "developer-center-homepage",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "description": "Landing page of TapTap Developer Center (https://developer.taptap.cn/)",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "build:release": "vite build && node scripts/prerender.mjs",
+    "preview": "vite preview",
+    "typecheck": "vue-tsc --noEmit",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "audit:dist": "node scripts/audit-dist.mjs",
+    "check:tracking": "node scripts/check-tracking-contract.mjs",
+    "package:release": "node scripts/package-release.mjs"
+  },
+  "dependencies": {
+    "js-cookie": "3.0.8",
+    "vue": "3.5.44"
+  },
+  "devDependencies": {
+    "@types/node": "26.6.5",
+    "@vitejs/plugin-vue": "6.0.10",
+    "prettier": "3.9.10",
+    "puppeteer": "25.14.0",
+    "typescript": "5.9.3",
+    "vite": "8.3.4",
+    "vue-tsc": "3.3.13"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/taptap/developer-center-homepage.git"
+  },
+  "homepage": "https://developer.taptap.cn/",
+  "bugs": {
+    "url": "https://github.com/taptap/developer-center-homepage/issues"
+  },
+  "engines": {
+    "node": ">=24.0.0",
+    "pnpm": ">=12"
+  },
+  "packageManager": "pnpm@12.14.0"
+}

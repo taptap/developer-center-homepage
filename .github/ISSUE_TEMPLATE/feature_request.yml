@@ -1,0 +1,39 @@
+name: Feature request
+description: A new requirement or improvement for the landing page
+labels: [enhancement]
+body:
+  - type: textarea
+    id: background
+    attributes:
+      label: Background
+      description: Why is this needed? Design handoff, campaign request, accessibility or performance?
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposed change
+      description: Describe the expected result. Link or attach design files if available.
+    validations:
+      required: true
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives considered
+    validations:
+      required: false
+  - type: checkboxes
+    id: boundary
+    attributes:
+      label: Does it touch protected files?
+      description: See the "Conventions" section of the README.
+      options:
+        - label: Touches analytics fields, X-UA, vendor code or deployment config (needs maintainer sign-off)
+          required: false
+  - type: checkboxes
+    id: checks
+    attributes:
+      label: Confirmations
+      options:
+        - label: I searched existing issues and found no duplicate
+          required: true
