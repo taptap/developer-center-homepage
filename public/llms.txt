@@ -1,0 +1,82 @@
+# TapTap 开发者服务
+
+> TapTap 开发者中心：面向游戏开发者的游戏发行、上架与运营平台。
+> 支持传统发行轨（预约、测试、首发、运营）与轻量上架轨（PC 游戏、H5 游戏、TapTap 制造、AI 生成游戏）。
+> 提供 TapTap CLI，可在命令行完成创建游戏、上传素材、提交审核与发布运营。
+
+## 核心入口
+
+- [开发者中心首页](https://developer.taptap.cn/)
+- [游戏商店](https://developer.taptap.cn/store)
+- [游戏服务](https://developer.taptap.cn/service)
+- [开发者文档](https://developer.taptap.cn/docs/)
+- [开发者文档索引（llms）](https://developer.taptap.cn/docs/llms.txt)
+
+## TapTap CLI
+
+- [CLI 使用文档](https://developer.taptap.cn/v3/cli/)
+- [CLI 使用文档 Markdown 版](https://developer.taptap.cn/v3/cli/get-started/overview.md)
+- [CLI 命令参考](https://developer.taptap.cn/v3/cli/command-reference.md)
+- [CLI AI 能力参考](https://developer.taptap.cn/v3/cli/skill-reference.md)
+
+### 安装与登录
+
+```bash
+npm i -g @taptap/cli --registry=https://registry.npmjs.org/
+taptap-cli auth login
+npx skills add taptap/cli
+```
+
+### CLI 能力索引
+
+- [CLI 入口与路由](https://developer.taptap.cn/v3/cli/skills/taptap-cli.md)
+- [身份与上下文定位](https://developer.taptap.cn/v3/cli/skills/taptap-identity.md)
+- [创建游戏](https://developer.taptap.cn/v3/cli/skills/taptap-publish-game.md)
+- [资料编辑与版本发布](https://developer.taptap.cn/v3/cli/skills/taptap-app-edit.md)
+- [上架资质](https://developer.taptap.cn/v3/cli/skills/taptap-qualification.md)
+- [包体管理与自测](https://developer.taptap.cn/v3/cli/skills/taptap-package-management.md)
+- [测试计划](https://developer.taptap.cn/v3/cli/skills/taptap-test-plan.md)
+- [数据表现](https://developer.taptap.cn/v3/cli/skills/taptap-dashboard-stats.md)
+- [图片素材库](https://developer.taptap.cn/v3/cli/skills/taptap-asset-library.md)
+
+### 能力边界
+
+- CLI 覆盖游戏创建、资料与素材、资质、包体、测试计划、数据表现等关键链路。
+- 具体支持范围以本机 `taptap-cli skills list` 输出为准。
+- Tap 小游戏上传当前不通过 CLI 上传命令发起，需在控制台完成。
+
+## 游戏服务（可交给 AI 助手接入）
+
+一句话接入指令，可直接复制给 AI 助手：
+
+> 读 https://developer.taptap.cn/agents.md，帮我把 TapTap 游戏服务接入我的游戏，先给方案再改代码。
+
+每项能力在首页给出一个入口，指向对应的功能介绍文档：
+
+| 能力 | 功能介绍 |
+| --- | --- |
+| 云存档 | https://developer.taptap.cn/docs/sdk/tap-cloudsave/features/ |
+| 变现能力（广告与内购集成） | https://developer.taptap.cn/docs/sdk/tap-iap/overview/ |
+| 游戏成就 | https://developer.taptap.cn/docs/sdk/achievement/features/ |
+| 排行榜 | https://developer.taptap.cn/docs/sdk/leaderboard/features/ |
+| TapTap 登录 | https://developer.taptap.cn/docs/sdk/taptap-login/features/ |
+| 内嵌动态 | https://developer.taptap.cn/docs/sdk/embedded-moments/features |
+
+### 已接入能力的最佳案例
+
+- 心动的公寓 —— 全套游戏服务 · 上架变现：AI 制作的作品，上线 2 周获得 160+ 条真实玩家评价。
+- 翡翠经营模拟器 —— TapTap 制造 · 一键发布：个人开发者从零制作，上线 3 个月累计热度 100 万+。
+- 心动小镇 —— 登录 · 更新唤起 · 礼包 · 社区：独家发行，登录、礼包与社区互动组合使用，上线两周下载 1438 万+。
+
+### 其他游戏服务文档
+
+- [TapTap 登录](https://developer.taptap.cn/docs/sdk/)
+- [数据分析 TapDB](https://developer.taptap.cn/docs/sdk/tapdb/)
+- [礼包系统](https://developer.taptap.cn/docs/sdk/tds-gift/)
+- [TapLink](https://developer.taptap.cn/docs/sdk/taplink/)
+- [上传 APK](https://developer.taptap.cn/docs/sdk/apk-upload/guide/)
+
+## 可选
+
+- [开发者论坛](https://www.taptap.cn/forum/g28)
+- [海外版开发者中心](https://developer.taptap.io/)
