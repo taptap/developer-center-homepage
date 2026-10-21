@@ -11,8 +11,9 @@
  *    `location` gets baked into the HTML — that is how a `localhost:8001` link once
  *    reached production)
  * 5. no sourcemaps (files or sourceMappingURL references)
- * 6. index.html carries the build version (`<meta name="landing-version">`), and it
- *    matches `APP_VERSION` (the release tag) or `package.json`
+ * 6. index.html carries the build version (`<meta name="x-release-version">`), matching
+ *    `APP_VERSION` (the release tag) or `package.json`, plus a
+ *    `<meta name="x-release-time">` in `YYYY/MM/DD HH:mm:ss`
  * 7. with `--expect-base`: every static reference in index.html points at that CDN base
  *    (the contract with tds-dc, which uploads the files to that prefix)
  * 8. with `--require-prerender`: index.html must be a prerendered page
@@ -112,11 +113,18 @@ for (const file of files) {
 
 // 6) version stamp (the release tag is the only source of truth, see vite.config.ts)
 const html = await readFile(path.join(DIST, 'index.html'), 'utf8');
-const versionMatch = html.match(/<meta name="landing-version" content="([^"]*)"\s*\/?>/);
-if (!versionMatch) {
-  fail('index.html has no `<meta name="landing-version">` — the version stamp did not run');
-} else if (versionMatch[1] !== expectedVersion) {
-  fail(`index.html reports version "${versionMatch[1]}" but "${expectedVersion}" was built`);
+const releaseVersion = html.match(/<meta name="x-release-version" content="([^"]*)"\s*\/?>/);
+if (!releaseVersion) {
+  fail('index.html has no `<meta name="x-release-version">` — the version stamp did not run');
+} else if (releaseVersion[1] !== expectedVersion) {
+  fail(`\`x-release-version\` reports "${releaseVersion[1]}" but "${expectedVersion}" was built`);
+}
+
+const releaseTime = html.match(/<meta name="x-release-time" content="([^"]*)"\s*\/?>/);
+if (!releaseTime) {
+  fail('index.html has no `<meta name="x-release-time">`');
+} else if (!/^\d{4}\/\d{2}\/\d{2} \d{2}:\d{2}:\d{2}$/.test(releaseTime[1])) {
+  fail(`\`x-release-time\` is not YYYY/MM/DD HH:mm:ss: "${releaseTime[1]}"`);
 }
 
 // 7) CDN base contract: the release is served from one fixed prefix, and tds-dc uploads
