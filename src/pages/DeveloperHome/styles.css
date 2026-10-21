@@ -6472,7 +6472,7 @@ img {
   transition: opacity 180ms ease;
 }
 
-.eco-grid.eco-swap-enter {
+.eco-grid.eco-swap-enter-from {
   opacity: 0;
 }
 

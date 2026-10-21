@@ -49,7 +49,7 @@ export const ECOSYSTEM_SERVICES: EcoService[] = [
     ],
     codeSample: [
       '// 提示词示例：直接贴给 AI 助手',
-      '在 Unity 项目里接入 TapTap 云存档：',
+      '接入 TapTap 云存档：',
       '1. 关键节点自动存档',
       '2. 玩家手动存档 / 读档',
       '3. 多存档位切换与备份',
@@ -71,7 +71,7 @@ export const ECOSYSTEM_SERVICES: EcoService[] = [
     ],
     codeSample: [
       '// 提示词示例：直接贴给 AI 助手',
-      '在 Unity 项目里接入 TapTap 广告变现：',
+      '接入 TapTap 变现能力（广告 + 内购）：',
       '1. 看广告获取游戏道具',
       '2. 看广告收益翻倍',
       '参考 TapTap 变现能力官方文档',

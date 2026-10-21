@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { onBeforeUnmount, ref } from 'vue';
+import { nextTick, onBeforeUnmount, ref } from 'vue';
 import ecoCaseAchievement from '@/assets/cases/eco-case-achievement.webp';
 import ecoCaseCloudSave from '@/assets/cases/eco-case-cloud-save.webp';
 import ecoCaseEmbeddedMoments from '@/assets/cases/eco-case-embedded-moments.webp';
@@ -36,6 +36,17 @@ let pendingShrinkIndex = -1;
 
 function prefersReducedMotion(): boolean {
   return Boolean(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches);
+}
+
+/**
+ * Move focus ourselves when the toggle removes the focused element (expanding replaces the
+ * card grid with the panel, collapsing does the opposite), otherwise keyboard users land on
+ * `body`. `preventScroll` keeps the section from jumping under them.
+ */
+function focusElement(el: Element | null | undefined): void {
+  const target = el as HTMLElement | null;
+  if (!target || typeof target.focus !== 'function') return;
+  target.focus({ preventScroll: true });
 }
 
 function serviceIndex(key: string): number {
@@ -81,7 +92,7 @@ function playMorph(el: Element | null | undefined, from: DOMRect | null): void {
   };
 }
 
-function captureMorphSource(event: MouseEvent): void {
+function captureMorphSource(event: Event): void {
   const target = event.currentTarget as HTMLElement | null;
   const card = target && target.closest ? target.closest('.eco-card') : null;
   pendingExpandRect = card ? card.getBoundingClientRect() : null;
@@ -97,14 +108,17 @@ function onSwapEnter(el: Element): void {
     pendingShrinkIndex = -1;
     const card = index >= 0 ? el.querySelectorAll('.eco-card')[index] : null;
     playMorph(card, fromCard);
+    focusElement(card ? card.querySelector('.eco-card__toggle') : null);
     return;
   }
   const fromPanel = pendingExpandRect;
   pendingExpandRect = null;
-  playMorph(el.querySelector('.eco-detail-card'), fromPanel);
+  const panelCard = el.querySelector('.eco-detail-card');
+  playMorph(panelCard, fromPanel);
+  focusElement(panelCard);
 }
 
-function toggleService(key: string, event: MouseEvent): void {
+function toggleService(key: string, event: Event): void {
   // Clicking the open card again returns to the grid, shrinking the panel back into place.
   if (openKey.value === key) {
     const panelCard = sectionRef.value ? sectionRef.value.querySelector('.eco-detail-card') : null;
@@ -130,33 +144,27 @@ function toggleService(key: string, event: MouseEvent): void {
   openKey.value = key;
 }
 
-const STRUCTURED_DATA_ID = 'dc-ecosystem-structured-data';
+/** WAI-ARIA tabs with automatic activation: arrows move focus and switch capability. */
+const PILL_KEY_STEP: Record<string, number | 'first' | 'last'> = {
+  ArrowRight: 1,
+  ArrowLeft: -1,
+  Home: 'first',
+  End: 'last',
+};
 
-/**
- * The page is prerendered, so this JSON-LD ends up in the static HTML and search engines /
- * AI crawlers can read the capability list without running the app.
- */
-function injectStructuredData(): void {
-  if (document.getElementById(STRUCTURED_DATA_ID)) return;
-  const script = document.createElement('script');
-  script.type = 'application/ld+json';
-  script.id = STRUCTURED_DATA_ID;
-  script.textContent = JSON.stringify({
-    '@context': 'https://schema.org',
-    '@type': 'ItemList',
-    name: 'TapTap 游戏服务',
-    description: 'TapTap 游戏服务的能力介绍与开发指南。',
-    itemListElement: SERVICES.map(function (item, index) {
-      return {
-        '@type': 'ListItem',
-        position: index + 1,
-        name: item.name,
-        description: item.desc,
-        url: item.introHref,
-      };
-    }),
+function onPillKeydown(event: KeyboardEvent, index: number): void {
+  const step = PILL_KEY_STEP[event.key];
+  if (step === undefined) return;
+  event.preventDefault();
+  const count = SERVICES.length;
+  const next = step === 'first' ? 0 : step === 'last' ? count - 1 : (index + step + count) % count;
+  const target = SERVICES[next];
+  if (!target) return;
+  if (openKey.value !== target.key) toggleService(target.key, event);
+  nextTick(function () {
+    const pills = sectionRef.value ? sectionRef.value.querySelectorAll('.eco-pill') : [];
+    focusElement(pills[next]);
   });
-  document.head.appendChild(script);
 }
 
 onBeforeUnmount(function () {
@@ -206,6 +214,7 @@ onBeforeUnmount(function () {
               :id="'eco-panel-' + item.key"
               class="eco-detail-card"
               role="tabpanel"
+              tabindex="-1"
               :aria-labelledby="'eco-pill-' + item.key"
             >
               <header class="eco-detail-card__head">
@@ -258,7 +267,7 @@ onBeforeUnmount(function () {
 
           <div class="eco-pills" role="tablist" aria-label="游戏服务能力">
             <button
-              v-for="item in SERVICES"
+              v-for="(item, index) in SERVICES"
               :id="'eco-pill-' + item.key"
               :key="item.key"
               type="button"
@@ -267,7 +276,9 @@ onBeforeUnmount(function () {
               :class="{ 'is-active': openKey === item.key }"
               :aria-selected="openKey === item.key ? 'true' : 'false'"
               :aria-controls="'eco-panel-' + item.key"
+              :tabindex="openKey === item.key ? 0 : -1"
               @click="toggleService(item.key, $event)"
+              @keydown="onPillKeydown($event, index)"
             >
               <span :class="['eco-icon', 'eco-icon--' + item.icon]"
                 ><i :class="['ph', item.glyph]" aria-hidden="true"></i></span
