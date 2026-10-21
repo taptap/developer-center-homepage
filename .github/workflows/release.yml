@@ -67,7 +67,7 @@ jobs:
           echo "tag=$TAG"
 
       # The tag is the only version source: it drives the build stamp, the tarball name
-      # (scripts/package-release.mjs) and the `landing-version` meta tag.
+      # (scripts/package-release.mjs) and the `x-release-version` meta tag.
       - name: Resolve version
         run: |
           if [ "${{ github.ref_type }}" = "tag" ]; then

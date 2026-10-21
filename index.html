@@ -5,8 +5,10 @@
     <meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=yes" />
     <link rel="canonical" href="https://developer.taptap.cn/" />
     <meta name="theme-color" content="#09092f" />
-    <!-- Build version, injected from the release tag: `curl -s https://developer.taptap.cn/ | grep landing-version` -->
-    <meta name="landing-version" content="__APP_VERSION__" />
+    <!-- Release identity for support/debug: version (from the tag) + when the release was
+         cut, not when it was built. `curl -s https://developer.taptap.cn/ | grep x-release-` -->
+    <meta name="x-release-version" content="__APP_VERSION__" />
+    <meta name="x-release-time" content="__APP_RELEASE_TIME__" />
     <meta property="og:type" content="website" />
     <meta property="og:site_name" content="TapTap 开发者服务" />
     <meta property="og:url" content="https://developer.taptap.cn/" />
