@@ -206,17 +206,12 @@ try {
   const mountPoint = /<div id="app"><\/div>/;
   if (!mountPoint.test(template)) throw new Error('[prerender] the built index.html has no empty #app mount point');
 
-  // Drop the first-paint skeleton: the prerendered page already has real content. The
-  // non-greedy body plus the `#app` lookahead lands on the skeleton's own closing tag.
-  const withoutSkeleton = template.replace(
-    /\s*<div class="landing-loading">[\s\S]*?<\/div>\s*(?=<div id="app">)/,
-    '\n    ',
-  );
-  if (withoutSkeleton.includes('class="landing-loading"')) {
-    throw new Error('[prerender] could not remove the first-paint skeleton from the template');
-  }
-
-  const html = withoutSkeleton.replace(mountPoint, () => appHtml);
+  // The first-paint gate is kept in the artifact on purpose: the prerendered markup is the
+  // whole homepage, and the console-entry check needs a moment before it can redirect a
+  // signed-in developer. Without the gate that wait is a visible flash of the homepage.
+  // `<noscript>` hides it when scripts cannot run, and the inline safety-net timer in
+  // index.html drops it if the bundle never starts.
+  const html = template.replace(mountPoint, () => appHtml);
 
   /**
    * Anything the app resolved against `location` during rendering carries the local

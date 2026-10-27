@@ -19,6 +19,9 @@ const ENTRY_CHECK_TIMEOUT_MS = 1200;
 /** Path prefix of the login callback: coming back from a sign-in still ends in the console. */
 const LOGIN_CALLBACK_PREFIX = '/auth/';
 
+/** Navigation types the browser reports for history traversal. */
+const BACK_FORWARD = 'back_forward';
+
 /**
  * Where the console starts for this visitor, or `null` when the homepage should stay.
  *
@@ -32,6 +35,11 @@ export async function resolveConsoleEntry(): Promise<string | null> {
   // `?from=…` marks an intentional landing (campaign, docs, QR code): the homepage is the
   // destination, not a trampoline.
   if (new URLSearchParams(location.search).has('from')) return null;
+  // A history traversal is the visitor asking for the homepage: going "back" from the
+  // console must not bounce them forward again, even when the browser reloads the document
+  // instead of restoring it from the back/forward cache (in which case `document.referrer`
+  // can still point at wherever the session originally started).
+  if (isHistoryTraversal()) return null;
   // Internal navigation back to `/` means the visitor asked for the homepage.
   if (!isFirstVisit()) return null;
 
@@ -44,6 +52,11 @@ export async function resolveConsoleEntry(): Promise<string | null> {
  * the visitor has not expressed interest in the homepage itself. Cross-origin referrers
  * (search results, docs, social posts) count as first visits too.
  */
+function isHistoryTraversal(): boolean {
+  const [navigation] = performance.getEntriesByType('navigation');
+  return (navigation as PerformanceNavigationTiming | undefined)?.type === BACK_FORWARD;
+}
+
 function isFirstVisit(): boolean {
   const referrer = document.referrer;
   if (!referrer) return true;

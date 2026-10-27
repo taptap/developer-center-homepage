@@ -5,23 +5,33 @@ import DeveloperHome from '@/pages/DeveloperHome/index.vue';
 
 defineOptions({ name: 'App' });
 
-function removeFirstPaintSkeleton() {
-  const loading = document.querySelector('.landing-loading');
-  if (loading && loading.parentNode) loading.parentNode.removeChild(loading);
+/**
+ * Drop the first-paint gate declared in index.html.
+ *
+ * The gate ships in the prerendered artifact too: the markup is the whole homepage, so
+ * without it a signed-in developer would see the page flash before the redirect.
+ */
+function revealHomepage() {
+  const gate = document.querySelector('.entry-gate');
+  if (gate && gate.parentNode) gate.parentNode.removeChild(gate);
 }
 
 onMounted(() => {
-  // The skeleton declared in index.html stays up until Vue has taken over *and* the
-  // console-entry question is settled: a signed-in developer should never see the marketing
-  // page flash before the redirect, and everyone else should not see it at all.
   void resolveConsoleEntry().then(function (target) {
     if (target) {
       // Push, not replace: the SPA behaved the same way, so "back" returns to the homepage.
+      // The gate stays up until the navigation commits, so the flash never happens.
       window.location.assign(target);
       return;
     }
-    removeFirstPaintSkeleton();
+    revealHomepage();
   });
+});
+
+// Back/forward cache: the page comes back exactly as it was left — usually mid-decision
+// with the gate still up, and `onMounted` does not run again on restore.
+window.addEventListener('pageshow', function (event) {
+  if (event.persisted) revealHomepage();
 });
 </script>
 
