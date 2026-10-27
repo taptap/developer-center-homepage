@@ -149,7 +149,8 @@ if (requirePrerender) {
   if (!html.includes('为全球开发者')) fail('index.html is missing the hero copy — prerender did not run');
   if (!html.includes('id="app"'))
     fail('index.html is missing the #app mount point — the page would lose all interactivity');
-  if (html.includes('class="landing-loading"')) fail('index.html still contains the first-paint skeleton');
+  if (!html.includes('class="entry-gate"'))
+    fail('index.html is missing the first-paint gate — the console-entry check would flash the homepage');
 }
 
 // summary
