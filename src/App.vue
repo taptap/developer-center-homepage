@@ -1,13 +1,27 @@
 <script setup lang="ts">
 import { onMounted } from 'vue';
+import { resolveConsoleEntry } from '@/boot/console-entry';
 import DeveloperHome from '@/pages/DeveloperHome/index.vue';
 
 defineOptions({ name: 'App' });
 
-onMounted(() => {
-  // Remove the first-paint skeleton declared in index.html once Vue has taken over.
+function removeFirstPaintSkeleton() {
   const loading = document.querySelector('.landing-loading');
   if (loading && loading.parentNode) loading.parentNode.removeChild(loading);
+}
+
+onMounted(() => {
+  // The skeleton declared in index.html stays up until Vue has taken over *and* the
+  // console-entry question is settled: a signed-in developer should never see the marketing
+  // page flash before the redirect, and everyone else should not see it at all.
+  void resolveConsoleEntry().then(function (target) {
+    if (target) {
+      // Push, not replace: the SPA behaved the same way, so "back" returns to the homepage.
+      window.location.assign(target);
+      return;
+    }
+    removeFirstPaintSkeleton();
+  });
 });
 </script>
 

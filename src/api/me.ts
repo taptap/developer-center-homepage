@@ -25,10 +25,19 @@ interface UserWithMenu {
  * - Authenticates with cookies, so `credentials: 'include'` is required
  * - A 401 means "not signed in" and resolves to `null` instead of throwing
  * - The endpoint answers either `{ success, data }` or the payload directly
+ * - The answer is memoised for the page lifetime: the console-entry check and the
+ *   signed-in header ask the same question, and a second round trip would only repeat it
  */
 const USER_ENDPOINT = ON_LOOPBACK ? `${PRODUCTION_ORIGIN}/api/user/v1/me` : '/api/user/v1/me';
 
-export async function fetchMe(): Promise<UserWithMenu | null> {
+let meRequest: Promise<UserWithMenu | null> | null = null;
+
+export function fetchMe(): Promise<UserWithMenu | null> {
+  meRequest ??= requestMe();
+  return meRequest;
+}
+
+async function requestMe(): Promise<UserWithMenu | null> {
   try {
     const res = await fetch(USER_ENDPOINT, {
       method: 'GET',
