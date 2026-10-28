@@ -1,12 +1,19 @@
 import { fetchDeveloperList } from '@/api/developer-list';
 import { fetchMe } from '@/api/me';
+import { LINKS } from '@/config/links';
 import { ON_LOOPBACK, PRERENDERING } from '@/config/origin';
 
 /**
  * The homepage doubles as the console's front door: a visitor who is signed in and already
- * owns a developer account is sent straight to `/{developerId}/all-apps` instead of being
- * shown the marketing page. The rules mirror the SPA route guard this page replaced, so
- * that landing on `/` behaves the same way from either entry point.
+ * owns a developer account is sent straight to the console instead of being shown the
+ * marketing page. The rules mirror the SPA route guard this page replaced, so landing on
+ * `/` behaves the same way from either entry point.
+ *
+ * The target is `LINKS.console` — the same entry the "进入控制台" button points at — rather
+ * than a developer-scoped path (`/{developerId}/all-app`, `/{developerId}/all-apps`, …):
+ * those paths belong to the console app, have already been renamed once, and getting one
+ * wrong lands the visitor on its error page. `/console` resolves the console route itself
+ * and picks the first developer the account belongs to.
  *
  * Every uncertainty resolves to `null` — "stay on the homepage". A wrong redirect is much
  * worse than a missed one: it would drop a signed-out visitor, or a developer whose list
@@ -81,10 +88,7 @@ async function probeConsoleEntry(): Promise<string | null> {
   const developers = await fetchDeveloperList();
   if (!developers || developers.length === 0) return null; // unresolved, or no account yet
 
-  const developerId = developers[0]?.id;
-  if (developerId === undefined || developerId === null || developerId === '') return null;
-
-  return `/${encodeURIComponent(String(developerId))}/all-apps`;
+  return LINKS.console;
 }
 
 /** A late redirect is worse than none: once the deadline passes, the page is the answer. */
