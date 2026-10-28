@@ -24,9 +24,9 @@
     "@types/node": "26.6.5",
     "@vitejs/plugin-vue": "6.0.10",
     "prettier": "3.9.10",
-    "puppeteer": "25.14.0",
+    "puppeteer": "25.16.0",
     "typescript": "5.9.3",
-    "vite": "8.3.4",
+    "vite": "8.3.5",
     "vue-tsc": "3.3.13"
   },
   "repository": {
