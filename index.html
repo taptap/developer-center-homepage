@@ -201,11 +201,12 @@
     </div>
     <div id="app"></div>
     <script>
-      // Safety net: if the entry check never reports back (bundle error, blocked API), reveal
-      // the page instead of leaving the gate up forever. Has to stay longer than the app's own
-      // decision deadline (`ENTRY_CHECK_TIMEOUT_MS`), otherwise a slow API would uncover the
-      // page while a redirect is still possible.
-      window.setTimeout(function () {
+      // Safety net: if the entry check never reports back (bundle error, blocked API, slow
+      // network), reveal the page instead of leaving the gate up forever. It marks the page as
+      // revealed, and `src/boot/entry-gate.ts` reads that mark: once the homepage is visible it
+      // must not redirect anymore, or the visitor watches the page appear and then jump.
+      window.__consoleEntryTimer = window.setTimeout(function () {
+        window.__consoleEntryRevealed = true;
         var gate = document.querySelector('.entry-gate');
         if (gate && gate.parentNode) gate.parentNode.removeChild(gate);
       }, 3000);

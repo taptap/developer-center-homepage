@@ -1,24 +1,16 @@
 <script setup lang="ts">
 import { onMounted } from 'vue';
 import { resolveConsoleEntry } from '@/boot/console-entry';
+import { isGateRevealed, revealHomepage } from '@/boot/entry-gate';
 import DeveloperHome from '@/pages/DeveloperHome/index.vue';
 
 defineOptions({ name: 'App' });
 
-/**
- * Drop the first-paint gate declared in index.html.
- *
- * The gate ships in the prerendered artifact too: the markup is the whole homepage, so
- * without it a signed-in developer would see the page flash before the redirect.
- */
-function revealHomepage() {
-  const gate = document.querySelector('.entry-gate');
-  if (gate && gate.parentNode) gate.parentNode.removeChild(gate);
-}
-
 onMounted(() => {
   void resolveConsoleEntry().then(function (target) {
-    if (target) {
+    // The safety net may have revealed the page while the check was still running (slow
+    // network); redirecting now would show the homepage and then take it away again.
+    if (target && !isGateRevealed()) {
       // Push, not replace: the SPA behaved the same way, so "back" returns to the homepage.
       // The gate stays up until the navigation commits, so the flash never happens.
       window.location.assign(target);
