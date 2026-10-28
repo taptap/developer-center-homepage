@@ -51,11 +51,15 @@
 
       /* Covers the prerendered content until the console-entry check has answered, so a
          signed-in developer never sees the homepage flash before the redirect. Removed by
-         `src/App.vue` (or by the safety-net timer below) as soon as that answer is known. */
+         `src/App.vue` (or by the safety-net timer below) as soon as that answer is known.
+
+         The z-index has to beat everything the page paints: the top bar sits at 3000 and the
+         hero glow at 850–1000, so a modest value let the half-styled hero show through while
+         the check was still running. */
       .entry-gate {
         position: fixed;
         inset: 0;
-        z-index: 1;
+        z-index: 2147483000;
         display: flex;
         justify-content: center;
         align-items: center;
@@ -198,11 +202,13 @@
     <div id="app"></div>
     <script>
       // Safety net: if the entry check never reports back (bundle error, blocked API), reveal
-      // the page instead of leaving the gate up forever.
+      // the page instead of leaving the gate up forever. Has to stay longer than the app's own
+      // decision deadline (`ENTRY_CHECK_TIMEOUT_MS`), otherwise a slow API would uncover the
+      // page while a redirect is still possible.
       window.setTimeout(function () {
         var gate = document.querySelector('.entry-gate');
         if (gate && gate.parentNode) gate.parentNode.removeChild(gate);
-      }, 1500);
+      }, 3000);
     </script>
     <script type="module" src="/src/main.ts"></script>
   </body>
