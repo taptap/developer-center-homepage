@@ -51,11 +51,15 @@
 
       /* Covers the prerendered content until the console-entry check has answered, so a
          signed-in developer never sees the homepage flash before the redirect. Removed by
-         `src/App.vue` (or by the safety-net timer below) as soon as that answer is known. */
+         `src/App.vue` (or by the safety-net timer below) as soon as that answer is known.
+
+         The z-index has to beat everything the page paints: the top bar sits at 3000 and the
+         hero glow at 850–1000, so a modest value let the half-styled hero show through while
+         the check was still running. */
       .entry-gate {
         position: fixed;
         inset: 0;
-        z-index: 1;
+        z-index: 2147483000;
         display: flex;
         justify-content: center;
         align-items: center;
@@ -197,12 +201,15 @@
     </div>
     <div id="app"></div>
     <script>
-      // Safety net: if the entry check never reports back (bundle error, blocked API), reveal
-      // the page instead of leaving the gate up forever.
-      window.setTimeout(function () {
+      // Safety net: if the entry check never reports back (bundle error, blocked API, slow
+      // network), reveal the page instead of leaving the gate up forever. It marks the page as
+      // revealed, and `src/boot/entry-gate.ts` reads that mark: once the homepage is visible it
+      // must not redirect anymore, or the visitor watches the page appear and then jump.
+      window.__consoleEntryTimer = window.setTimeout(function () {
+        window.__consoleEntryRevealed = true;
         var gate = document.querySelector('.entry-gate');
         if (gate && gate.parentNode) gate.parentNode.removeChild(gate);
-      }, 1500);
+      }, 3000);
     </script>
     <script type="module" src="/src/main.ts"></script>
   </body>
